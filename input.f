@@ -262,9 +262,7 @@ C          GENERATE INITIAL MASS FUNCTION N(M) = M**(-3/2) IN ZM2 TO ZM1.
       ZMASS = 0.0
       DO 22 I = 1,N
    21 ZM = ZM1/RAN2(KKK)**2
-*---------------------------------CHANGED BY ZXC----------------------------
       IF (ZM.GT.ZM2)  GO TO 21
-*--------------------------------------END CHANGE---------------------------
       BODY(I) = ZMOON*ZM
       ZMASS = ZMASS + BODY(I)
    22 CONTINUE
