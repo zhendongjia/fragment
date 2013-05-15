@@ -177,7 +177,8 @@ C          FORM NEW ELEMENTS WITH RESPECT TO THE SUN.
      &                                  X(3,ICOMP)*XDOT(3,ICOMP)
       ECC = DSQRT ((1.0 - RI/SEMI)**2 + RDOT**2/((1.0 + BCM)*SEMI))
 C
-      IF (KEMB.EQ.0.OR.LISTC(KEMB).GE.NMAX)  GO TO 176
+      IF (KEMB.EQ.0)  GO TO 176
+      IF (LISTC(KEMB).GE.NMAX)  GO TO 176
 C
 C          UPDATE EMBRYO VARIABLES (EVENT #, TIME, MASS, SEMI, E, EZ & NAME).
       IZ = (X(3,ICOMP)**2 + XDOT(3,ICOMP)**2)/ROCHE**2
