@@ -65,10 +65,10 @@ C          OBTAIN ELAPSED CPU TIME & UPDATE TOTAL SINCE LAST OUTPUT/RESTART.
       CALL CPUTIM(TCOMP)
       CPUTOT = CPUTOT + TCOMP - CPU0
       CPU0 = TCOMP
-      WRITE (6,10)  YEARS,TCOMP,NSTEPN(1),NSTEPN(2),NSTEPN(4),NSTEPN(5),
+      WRITE (6,10)  YEARS,TCOMP,NSTEPN(1),NSTEPN(2),NSTEPN(4),
      &                                      NSTEPN(9),NSTEPN(10),N,ERROR
    10 FORMAT (//,'  T =',F9.1,'  CPU =',F7.1,'  # =',I10,'  MOD =',I7,
-     &            '  MERG =',2I4,'  FRAG =',I4,'  CRAT =',I4,'  N =',I4,
+     &            '  MERG =',I4,'  FRAG =',I4,'  CRAT =',I4,'  N =',I4,
      &                                                '  DE/E =',1PE9.1)
 C
       ZH = 0.0
@@ -104,17 +104,12 @@ C
       IF (KZ(6).EQ.0)  GO TO 160
       DUMMY1 = 0.0
       DUMMY2 = 0.0
-*-------------------------------------CHANGED BY ZXC--------------------------------------------
-*      WRITE (3)  N
-*      WRITE (3)  YEARS,SCALE,DUMMY1,DUMMY2,(BODY(J),J=1,N),
-*     &            ((X(K,J),K=1,3),J=1,N),((XDOT(K,J),K=1,3),J=1,N)
       WRITE (3,50)  N, YEARS, SCALE, DUMMY1, DUMMY2
    50 FORMAT(/'N T SCALE DUMMY',I10, 2E10.1,2F8.1)
       DO 55  J=1,N
                 WRITE (3,60) BODY(J),(X(K,J),K=1,3),(XDOT(K,J),K=1,3)
    60 FORMAT(/'M R V',7E10.1)  
- 55   CONTINUE
-*-------------------------------------------end change---------------------------------------------
+   55 CONTINUE
   160 ISCALE = 1
       IF (KZ(12).EQ.1)  ISCALE = FLOAT (NSTEPN(4) + N)/(0.999*FLOAT(N))
 C          OUTPUT INTERVAL INCREASED BY INTEGER PART OF N0/N IF KZ(12) = 1.
