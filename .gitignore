@@ -1,0 +1,5 @@
+*.[oa]
+fragment
+*~
+runfile/
+.DS_Store

@@ -1,0 +1,26 @@
+      SUBROUTINE CPUTIM(TCOMP)
+C
+C
+C          CPU TIME.
+C          ---------
+C
+      REAL*8  TCOMP
+      COMMON/CPUZERO/ ICPU
+      REAL*4  TARRAY(2)
+C
+C
+      IF (ICPU.EQ.0)  THEN
+CC        CALL LIB$INIT_TIMER
+CC        TCOMP = 0.0
+          TCOMP = ETIME(TARRAY)
+          ICPU = 1
+      ELSE
+CC        CALL LIB$STAT_TIMER(2,ITIME)
+CC        TCOMP = FLOAT (ITIME)/6000.0
+          TCOMP = ETIME(TARRAY)/60.0
+C          ELAPSED CPUTIME IN MINUTES ON SUN, MIPS OR VAX.
+      END IF
+C
+      RETURN
+C
+      END
