@@ -1,8 +1,4 @@
-*.[oa]
-fragment
-*~
-runfile/
-.DS_Store
-*.bak
-*.orig
-\#*\#
+*
+!*.f
+!Makefile
+!COMMONP.for
