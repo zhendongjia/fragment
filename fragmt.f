@@ -46,38 +46,39 @@ C          SPECIFY FRAGMENT MASS FUNCTION FOR BODY #I.
          MF(L) = MF(L-1)/2
          NMF(L) = (CONST/BETA)*MF(L)**(-BETA/3)
  2    CONTINUE
-C
+C     
       DO 3 L = 1, LF
          IF (L.EQ.1) THEN 
             DO 4 Q = 1, NMF(L)
-                BF(Q) = MF(L)
- 4           CONTINUE
+               BF(Q) = MF(L)
+ 4          CONTINUE
          ELSE
             DO 5 Q = NMF(L-1)+1, NMF(L)
                BF(Q) = MF(L)
  5          CONTINUE
-          END IF
- 3     CONTINUE
-C
-C          REDUCE MASS & RADIUS OF BODY #I #J AND UPDATE GRAVITATIONAL ENERGY.
-       ZMEJ = MF(1)*NMF(1)
-       DO 10 L =2, LF
-          ZMEJ = ZMEJ + MF(L)*(NMF(L) - NMF(L-1))
- 10       CONTINUE
-       BODY(ICOMP) = (MTOT - ZMEJ)/2
-       BODY(JCOMP) = (MTOT - ZMEJ)/2
-       R(ICOMP) = RI*(BODY(ICOMP)/BODYI)**0.3333
-       R(JCOMP) = RI*(BODY(JCOMP)/BODYI)**0.3333
-       EGRAV = EGRAV + 0.6*BODY(ICOMP)**2/R(ICOMP) 
-     &                       + 0.6*BODY(JCOMP)**2/R(JCOMP)
+         END IF
+ 3    CONTINUE
+C     
+C     REDUCE MASS & RADIUS OF BODY #I #J AND UPDATE GRAVITATIONAL ENERGY.
+      ZMEJ = MF(1)*NMF(1)
+      DO 10 L =2, LF
+         ZMEJ = ZMEJ + MF(L)*(NMF(L) - NMF(L-1))
+ 10   CONTINUE
+      BODY(ICOMP) = (MTOT - ZMEJ)/2
+      BODY(JCOMP) = (MTOT - ZMEJ)/2
+      R(ICOMP) = RI*(BODY(ICOMP)/BODYI)**0.3333
+      R(JCOMP) = RI*(BODY(JCOMP)/BODYI)**0.3333
+      EGRAV = EGRAV + 0.6*BODY(ICOMP)**2/R(ICOMP) 
+     &     + 0.6*BODY(JCOMP)**2/R(JCOMP)
 C
 C          ASSIGN NEW LOCATIONS FOR THE FRAGMENTS AND INCREASE N.
+      IF (JUPITER.EQ.ICOMP .OR. JUPITER.EQ.JCOMP) JUPITER = N + 1
       DO 20 L = 1,NMF(LF)
-      NF = NF + 1
-      J = N + 1
-      IF(NF) = J			
-      N = N + 1
-   20 CONTINUE
+         NF = NF + 1
+         J = N + 1
+         IF(NF) = J			
+         N = N + 1
+ 20   CONTINUE
 C
 C          GENERATE  VELOCITIES OF THE LARGEST REMNANT
 C     VCM2 = VCM(1)**2  + VCM(2)**2 + VCM(3)**2

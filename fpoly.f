@@ -5,7 +5,7 @@ C          POLYNOMIAL INITIALIZATION.
 C          --------------------------
 C
       INCLUDE 'COMMONP.FOR'
-      DIMENSION  A(6),P(3),PDOT(3)
+      COMMON/FPOLYC/ P(3),PDOT(3),RMIN2,VRMIN,JMIN
 C
 C
       NBP1 = NBPERT + 1
@@ -24,45 +24,30 @@ C
 C          FIRST OBTAIN THE PERTURBING FORCE AND ITS DERIVATIVE.
       DO 10 IDUM = 1,NBMAX
       NNB = LIST(1,IBINJ)
-      IF (NNB.EQ.0)  GO TO 9
       IDIS = IABS (IDUM - NBP1)
-      L = 1
-    2 L = L + 1
+
+      DO 8 L = 2, NNB+1
       J = LIST(L,IBINJ)
-      IF (J.EQ.I)  GO TO 8
+      IF (J.EQ.I) CYCLE
+C     AVOID DUPLICATE COMPUTION FOR PERTURBING PLANET
+      IF (KZ(3).GT.0 .AND. KZ(17).GT.0 .AND. J.EQ.JUPITER) CYCLE
 C          INCLUDE ALL EMBRYOS.
-      IF (BODY(J).GT.EMBRYO)  GO TO 4
-      IF (IABS(IBINR - LISTR(J)).GT.NRPERT.OR.IDIS.GT.MPERT(J))  GO TO 8
-C
-    4 RIJ2 = 0.0
-      RDOT = 0.0
-C
-      DO 5 K = 1,3
-      A(K) = X(K,J) - X(K,I)
-      A(K+3) = XDOT(K,J) - XDOT(K,I)
-      RIJ2 = RIJ2 + A(K)**2
-      RDOT = RDOT + A(K)*A(K+3)
-    5 CONTINUE
-C
-      RIJ3 = RIJ2*DSQRT (RIJ2)
-C          FIND PLANETESIMAL CLOSEST TO BODY #I.       
-      IF (RIJ2.LT.RMIN2)  THEN
-          JMIN = J
-          RMIN2 = RIJ2
-          VRMIN = RDOT
+      IF (BODY(J).LE.EMBRYO) THEN
+         IF (IABS(IBINR - LISTR(J)).GT.NRPERT.OR.IDIS.GT.MPERT(J)) CYCLE
       END IF
-      RDOT = 3.0D0*RDOT/RIJ2
-      FIJ = BODY(J)/RIJ3
 C
-      DO 7 K = 1,3
-      P(K) = P(K) + A(K)*FIJ
-      PDOT(K) = PDOT(K) + (A(K+3) - A(K)*RDOT)*FIJ
-    7 CONTINUE
+      CALL CALC_FPOLY(I, J)
 C
-    8 IF (L.LE.NNB)  GO TO 2
-    9 IBINJ = IBINJ + 1
+    8 CONTINUE
+
+      IBINJ = IBINJ + 1
       IF (IBINJ.GT.NBTOT)  IBINJ = IBINJ - NBTOT
    10 CONTINUE
+
+C     CALCULATE THE IMPACT OF THE PERTURBING PLANET.
+      IF (KZ(3).GT.0 .AND. KZ(17).GT.0 .AND. I.NE.JUPITER) THEN
+         CALL CALC_FPOLY(I, JUPITER)
+      END IF
 C
 C          ADD SOLAR CONTRIBUTION TO FORCE & THREE TAYLOR SERIES DERIVATIVES.
       SUNPL = 1.0 + BODY(I)
@@ -147,4 +132,35 @@ C          SEE WHETHER STABILIZATION PROCEDURE CAN BE ACTIVATED AGAIN.
 C
    50 RETURN
 C
+      END
+
+
+      SUBROUTINE CALC_FPOLY(I,J)
+      INCLUDE 'COMMONP.FOR'
+      COMMON/FPOLYC/ P(3),PDOT(3),RMIN2,VRMIN,JMIN
+      REAL*8 A(6)
+    4 RIJ2 = 0.0
+      RDOT = 0.0
+C
+      DO 5 K = 1,3
+      A(K) = X(K,J) - X(K,I)
+      A(K+3) = XDOT(K,J) - XDOT(K,I)
+      RIJ2 = RIJ2 + A(K)**2
+      RDOT = RDOT + A(K)*A(K+3)
+    5 CONTINUE
+C
+      RIJ3 = RIJ2*DSQRT (RIJ2)
+C          FIND PLANETESIMAL CLOSEST TO BODY #I.       
+      IF (RIJ2.LT.RMIN2)  THEN
+          JMIN = J
+          RMIN2 = RIJ2
+          VRMIN = RDOT
+      END IF
+      RDOT = 3.0D0*RDOT/RIJ2
+      FIJ = BODY(J)/RIJ3
+C
+      DO 7 K = 1,3
+      P(K) = P(K) + A(K)*FIJ
+      PDOT(K) = PDOT(K) + (A(K+3) - A(K)*RDOT)*FIJ
+    7 CONTINUE
       END

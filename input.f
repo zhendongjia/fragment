@@ -101,6 +101,7 @@ C         13  INITIAL MASS FUNCTION N(M) = M**(-3/2) IN RANGE (ZM1,ZM2).
 C         14  NON-CIRCULAR ORBIT FOR INITIAL PROTOPLANETS (0.01*KZ(14) USED).
 C         15  SCALING OF INITIAL PARTICLE SIZES (READ SCALING FACTOR).
 C         16  ITERATION PROCEDURE & OUTPUT FOR Q & L DISTRIBUTION.
+C         17  ALWAYS CONSIDER THE IMPACT OF THE PERTURBING PLANET.
 C          ------------------------------------------------------------------
 C
 C
@@ -286,12 +287,14 @@ C
    25 FORMAT (//,10X,'IMF   MIN =',F7.3,'  MAX =',F7.3,
      &                                          '  DFMAX =',1PE10.1)
 C 
+      JUPITER = 0
    28 IF (KZ(3).NE.1)  GO TO 30
 C          INCLUDE ONE INITIAL BODY WITH SPECIFIED MASS & ORBITAL PARAMETERS.
       READ  (5,*)  A1,SEMI,ECC
       WRITE (6,29)  A1/ZMOON,SEMI,ECC
    29 FORMAT (//,5X,'PERTURBING PLANET AT PERICENTRE',F12.4,2F10.4)
       N = N + 1
+      JUPITER = N
       BODY(N) = A1
       R(N) = R(1)*(BODY(N)/ZMOON)**0.3333
       X(1,N) = SEMI*(1.0 - ECC)
