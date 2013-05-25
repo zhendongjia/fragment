@@ -5,8 +5,8 @@ C          INITIALIZATION OF FRAGMENTS.
 C          ----------------------------
 C
       INCLUDE 'COMMONP.FOR'
-      COMMON/CM/  XCM(3),VCM(3),BCM,ZMEJ,XF(8),VF(8),BF(8),AI,
-     & 		  NF,IF(10),ICOMP,JCOMP
+      COMMON/CM/  XCM(3),VCM(3),BCM,ZMEJ,XF(NFMAX),VF(NFMAX),BF(NFMAX),
+     & 		  AI,NF,IF(NFMAX),ICOMP,JCOMP
       COMMON/COLL/  VR2,VESC,VREB,EGRAV
 C
 C
@@ -33,7 +33,7 @@ C
       DO 20 L = 1,NF2
       J = IF(L)
       DO 12 K = 1,3
-   12 ZKIN = ZKIN + BODY(J)*(XDOT(K,J) - VCM(K))**2
+ 12      ZKIN = ZKIN + BODY(J)*(XDOT(K,J) - VCM(K))**2
       POTK = 0.0
       DO 15 LK = 1,NF2
       K = IF(LK)

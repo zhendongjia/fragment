@@ -1,0 +1,59 @@
+      REAL*8 FUNCTION GET_LARGEST_REMNANT()
+
+      INCLUDE 'COMMONP.FOR'
+      COMMON/CM/  XCM(3),VCM(3),BCM,ZMEJ,XF(NFMAX),VF(NFMAX),BF(NFMAX),
+     &     AI,NF,IF(NFMAX),ICOMP,JCOMP
+      REAL*8  RHO1, CSTAR, MIU_AVE, B, XR2, XDR2, LAP, ALPHA, MIU_ALPHA,
+     &     GAMMA, MTOT, M_SUN, RC1_M, RC1, MIU, QR, QRD, 
+     &     QRD1, QRD2, BMAX, V_I, V_J
+
+C     DENSITY IN KG/M^3
+      RHO1 = 1000
+      CSTAR = 5
+      MIU_AVE = 0.37
+      B = (X(1,ICOMP) - X(1,JCOMP))*(XDOT(1,ICOMP) - XDOT(1,JCOMP))
+     &     + (X(2,ICOMP) - X(2,JCOMP))*(XDOT(2,ICOMP) - XDOT(2,JCOMP))
+     &     + (X(3,ICOMP) - X(3,JCOMP))*(XDOT(3,ICOMP) - XDOT(3,JCOMP))
+      XR2 = (X(1,ICOMP) - X(1,JCOMP))**2 + (X(2,ICOMP) - X(2,JCOMP))**2
+     &     + (X(3,ICOMP) - X(3,JCOMP))**2
+      XDR2 = (XDOT(1,ICOMP) - XDOT(1,JCOMP))**2 + 
+     &     (XDOT(2,ICOMP) - XDOT(2,JCOMP))**2   +
+     &     (XDOT(3,ICOMP) - XDOT(3,JCOMP))**2
+      B = B/(SQRT(XR2)*SQRT(XDR2))
+      IF(R(JCOMP).LE.SQRT(XR2)*(1-B)) THEN
+         LAP=2*R(JCOMP)
+      ELSE 
+         LAP = R(JCOMP) + SQRT(XR2)*(1-B)
+      ENDIF
+
+      ALPHA = (3*R(JCOMP)*LAP**2 - LAP**3)/(4*R(JCOMP)**3)
+      MIU_ALPHA = ALPHA*BODY(ICOMP)*BODY(JCOMP)/(ALPHA*BODY(JCOMP)
+     &     +BODY(ICOMP))
+      GAMMA = BODY(JCOMP)/BODY(ICOMP)
+      MTOT = BODY(ICOMP) + BODY(JCOMP)
+C     RC1 IN M UNIT
+      M_SUN = 1.989E30
+      RC1_M = (MTOT*M_SUN/((4/3)*3.14*RHO1))**0.333
+C     RC1 IN AU UNIT
+      RC1 = RC1_M/1.5E11
+
+      MIU = BODY(ICOMP)*BODY(JCOMP)/MTOT
+      V_J = (XDOT(1,JCOMP)-VCM(1))**2 + (XDOT(2,JCOMP)-VCM(2))**2
+     &     + (XDOT(3,JCOMP)-VCM(3))**2
+      V_I = (XDOT(1,ICOMP)-VCM(1))**2 + (XDOT(2,ICOMP)-VCM(2))**2 
+     &     + (XDOT(3,ICOMP)-VCM(3))**2
+      
+      QR = (BODY(JCOMP)*V_J + BODY(ICOMP)*V_I)/(2*MTOT)
+      QRD = CSTAR*(3.0/5)*MTOT/RC1
+      QRD1 = QRD*((GAMMA+1)**2/(4*GAMMA))**(2/(3*MIU_AVE)-1)
+      QRD2 = (MIU/MIU_ALPHA)**(2-3*MIU_AVE/2)*QRD1 
+
+      IF(0.LT.QR/QRD2.AND.QR/QRD2.LT.1.8) THEN
+         GET_LARGEST_REMNANT = MTOT*((1- QR/QRD2)*0.5 + 0.5)
+      ELSE
+         GET_LARGEST_REMNANT = MTOT*0.1*(QRD2/QR)**(1.5)*1.8**1.5
+      END IF
+
+      RETURN
+      END
+
