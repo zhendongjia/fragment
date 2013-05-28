@@ -159,6 +159,11 @@ C
           WRITE (6,14)  RSCALE
    14     FORMAT (/,5X,'INITIAL SCALING FACTOR FOR RADII =',F6.2,/)
       END IF
+C
+      DO 3 I = 1, N
+         READ (5,*) BODY(I), (X(K,I), K = 1,3), (XDOT(K,I), K = 1, 3)
+ 3    CONTINUE 
+C
       ALPHA = TWOPI/FLOAT (NBTOT)
       ALPHA1 = 1.0/ALPHA
       NBMAX = 2*NBPERT + 1
@@ -196,9 +201,7 @@ C          GENERATE INITIAL CONDITIONS.
       DO 20 I = 1,N
       ISTAB(I) = KZ(1)
 C          INITIAL STABILIZATION MODE.
-      BODY(I) = ZMOON
       R(I) = RM
-CC      R(I) = 1.15D-05
 C          RADIUS OF THE MOON IN UNITS OF AU.
       R(I) = R(I)*SCALE**0.3333
       IF (KZ(15).NE.0)  R(I) = RSCALE*R(I)
@@ -209,19 +212,7 @@ C          SCALING OF INITIAL PARTICLE RADIUS BY INPUT PARAMETER.
       IF (KZ(4).EQ.1)  R1 = (DSQRT (R1) + DELTA)**2
       IF (KZ(4).EQ.2)  R1 = (R1**1.5 + DELTA)**0.66667
       IF (KZ(4).EQ.3)  R1 = RIN*EXP (FLOAT (I - 1)*DELTA)
-   16 THETA = TWOPI*RAN2(KKK)
-C          RANDOM PHASE ANGLE IN THE RANGE 0 - TWO PI.
-      X(1,I) = RADIUS*DCOS (THETA)
-      X(2,I) = RADIUS*DSIN (THETA)
-      PHI = TWOPI*RAN2(KKK)
-      X(3,I) = ZMAX*DCOS (PHI)
-      SUNPL = 1.0 + BODY(I)
-      VELOC2 = SUNPL/DSQRT (X(1,I)**2 + X(2,I)**2)
-C          SET VELOCITY COMPONENTS TO THE CIRCULAR VELOCITY.
-      XDOT(1,I) = -DSQRT (VELOC2)*DSIN (THETA)
-      XDOT(2,I) = DSQRT (VELOC2)*DCOS (THETA)
-      XDOT(3,I) = -ZMAX*DSIN (PHI)
-      IF (KZ(14).NE.0)  THEN
+ 16   IF (KZ(14).NE.0)  THEN
           KZ14 = KZ(14)
           XDOT(1,I) = XDOT(1,I)*(1.0 + 0.01*FLOAT (KZ14))
           XDOT(2,I) = XDOT(2,I)*(1.0 + 0.01*FLOAT (KZ14))
