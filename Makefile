@@ -1,4 +1,4 @@
-FFLAGS = -g
+FFLAGS = -O3 -march=native
 FC = gfortran
 SOURCE = \
 fragment.f block.f common.f cputim.f event.f fpoly.f fragmt.f histog.f \

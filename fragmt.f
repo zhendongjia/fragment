@@ -13,7 +13,7 @@ C
       REAL*8  MTOT, BETA, BMAX, BSMAX, VLR(3), A, DELT_V,
      &     MREM, S, V_ESC, PHI, NM(NFMAX), B, XR2,XDR2, ITA, 
      &     MF(LF), VMF(LF), M(LF), BODYI, XDOTI(3), RHO1, M_SUN, RC1, RI
-      INTEGER LK, Q, L, NLR, NSLR, NMF(LF), TAR, NAMEI
+      INTEGER LK, Q, L, NLR, NSLR, NMF(LF), TAR
 C
 C         DETERMINE THE TARGET
       ITA = BODY(JCOMP)/BODY(ICOMP)
@@ -23,7 +23,6 @@ C         DETERMINE THE TARGET
          TAR = ICOMP
       END IF 
       BODYI = BODY(TAR)
-      NAMEI = NAME(TAR)
       RI = R(TAR)
       DO 1 K = 1, 3 
             XDOTI(K) = XDOT(K,TAR)
@@ -73,11 +72,16 @@ C     REDUCE MASS & RADIUS OF BODY #I #J AND UPDATE GRAVITATIONAL ENERGY.
 C
 C          ASSIGN NEW LOCATIONS FOR THE FRAGMENTS AND INCREASE N.
       IF (JUPITER.EQ.ICOMP .OR. JUPITER.EQ.JCOMP) JUPITER = N + 1
+      WRITE(6,15) NAME(TAR), NAME(ICOMP+JCOMP-TAR), 
+     &     LASTNAME+1, LASTNAME+LF
+ 15   FORMAT("FRAGMT:", I5, I5, " -> ", I5, " ... ", I5)
       DO 20 L = 1,NMF(LF)
          NF = NF + 1
          J = N + 1
          IF(NF) = J			
          N = N + 1
+         LASTNAME = LASTNAME + 1
+         NAME(N) = LASTNAME
  20   CONTINUE
 C
 C          GENERATE  VELOCITIES OF THE LARGEST REMNANT
@@ -170,8 +174,6 @@ C
 C 
       BODY(J) = BF(Q)
       ISTAB(J) = 0
-C          LINK FRAGMENTS TO THEIR ORIGIN.
-      NAME(J) = NAMEI
 C          ALLOCATE FRACTIONAL SPIN.
       SPIN(J) = SPIN(I)*BODY(J)/BODYI
       R(J) = RI*(BODY(J)/BODYI)**0.3333
