@@ -61,27 +61,23 @@ C
       ENERGY = 0.5D0*(X0DOT(1,I)**2 + X0DOT(2,I)**2 + X0DOT(3,I)**2) -
      &                                                          SUNPL/RI
 C          BINDING ENERGY PER UNIT MASS WITH RESPECT TO THE SUN.
-      SEMI = -0.5D0*SUNPL/ENERGY
-      RDOT = X0(1,I)*X0DOT(1,I) + X0(2,I)*X0DOT(2,I) +X0(3,I)*X0DOT(3,I)
-      ECC = (1.0 - RI/SEMI)**2 + RDOT**2/(SEMI*SUNPL)
-      ECC = DSQRT (ECC)
-      IF (ECC.GE.1.0.OR.SEMI.GT.4.*ROUT/3.)  THEN
+      IF (ECC(I).GE.1.0.OR.SEMI(I).GT.4.*ROUT/3.)  THEN
           IGONE = I
-          AGONE = SEMI
-          EGONE = ECC
+          AGONE = SEMI(I)
+          EGONE = ECC(I)
       END IF
-      IF (ECC.GT.EMAX)  EMAX = ECC
+      IF (ECC(I).GT.EMAX)  EMAX = ECC(I)
       IF (I.EQ.IMAX)  THEN
-           EIMAX = ECC
-           AIMAX = SEMI
+           EIMAX = ECC(I)
+           AIMAX = SEMI(I)
       END IF
-      K = 1 + ECC/0.01
+      K = 1 + ECC(I)/0.01
 C          INTERVAL CHANGED FROM 0.005 TO 0.01 ON 26 OCTOBER 1982.
       IF (K.GT.25)  K = 25
       IF (K.GT.KMAX)  KMAX = K
       JHIST(K) = JHIST(K) + 1
-      IF (SEMI.LE.0.0)  GO TO 13
-      KSEMI = INT (1 + SEMI/0.1)
+      IF (SEMI(I).LE.0.0)  GO TO 13
+      KSEMI = INT (1 + SEMI(I)/0.1)
       IF (KSEMI.GT.KSEMIMAX.AND.KSEMI.LE.20)  KSEMIMAX = KSEMI
       IAHIST(KSEMI) = IAHIST(KSEMI) + INT (BODY(I)/ZMOON)
    13 WK(1) = BODY(I)/ZMOON
@@ -89,25 +85,25 @@ C          INTERVAL CHANGED FROM 0.005 TO 0.01 ON 26 OCTOBER 1982.
       KK = 1 + ALOG10 (WK(1))/ALOG10 (1.999)
       IF (KK.GT.KKMAX)  KKMAX = KK
       IF (KKMAX.GT.7)  KKMAX = 7
-      EBAR(KK) = EBAR(KK) + ECC
+      EBAR(KK) = EBAR(KK) + ECC(I)
       NEBAR(KK) = NEBAR(KK) + 1
       IF (KZ(10).EQ.0)  GO TO 14
       ZMASS = ZMASS + BODY(I)
-      DISP(1) = DISP(1) + ECC
-      DISP(2) = DISP(2) + ECC**2
-      DISP(3) = DISP(3) + BODY(I)*ECC
-      DISP(4) = DISP(4) + BODY(I)*ECC**2
-      DISP(5) = DISP(5) + SEMI
-      DISP(6) = DISP(6) + SEMI**2
-      DISP(7) = DISP(7) + BODY(I)*SEMI
-      DISP(8) = DISP(8) + BODY(I)*SEMI**2
-      DISP(9) = DISP(9) + ECC**3
-      DISP(10) = DISP(10) + ECC**4
+      DISP(1) = DISP(1) + ECC(I)
+      DISP(2) = DISP(2) + ECC(I)**2
+      DISP(3) = DISP(3) + BODY(I)*ECC(I)
+      DISP(4) = DISP(4) + BODY(I)*ECC(I)**2
+      DISP(5) = DISP(5) + SEMI(I)
+      DISP(6) = DISP(6) + SEMI(I)**2
+      DISP(7) = DISP(7) + BODY(I)*SEMI(I)
+      DISP(8) = DISP(8) + BODY(I)*SEMI(I)**2
+      DISP(9) = DISP(9) + ECC(I)**3
+      DISP(10) = DISP(10) + ECC(I)**4
       DISP(14) = DISP(14) + BODY(I)**2
       DISP(18) = DISP(18) + BODY(I)**3
       DISP(19) = DISP(19) + BODY(I)**4
-      IF (SEMI*(1.0 - ECC).LT.RIN)  NB1 = NB1 + 1
-      IF (SEMI*(1.0 + ECC).GT.ROUT)  NB2 = NB2  +  1
+      IF (SEMI(I)*(1.0 - ECC(I)).LT.RIN)  NB1 = NB1 + 1
+      IF (SEMI(I)*(1.0 + ECC(I)).GT.ROUT)  NB2 = NB2  +  1
    14 A(1) = BODY(I)
       IF (A(1).EQ.0.0)  A(1) = 1.0
       ROT = SPIN(I)/(0.4*A(1)*R(I)**2)
@@ -125,8 +121,8 @@ C          THE ANGLE IS NOW IN DEGREES.
       IMASS = BODY(I)/ZMOON
       TROT = 0.0
       IF (ROT.NE.0.0)  TROT = 365.0/ROT
-      WRITE (6,16)  I,THETA,STEP(I),RI,ENERGY,SEMI,ECC,ERROR,HDOT(I),
-     &                                                BODY(I),IMASS,TROT
+      WRITE (6,16)  I,THETA,STEP(I),RI,ENERGY,SEMI(I),ECC(I),ERROR,
+     &     HDOT(I), BODY(I),IMASS,TROT
    16 FORMAT (I9,F10.3,F10.4,F10.5,2F15.10,F12.8,1P3E10.1,0P,I6,F8.2)
    20 CONTINUE
       IF (KZ(8).EQ.0)  GO TO 40

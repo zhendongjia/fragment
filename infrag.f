@@ -22,6 +22,8 @@ C          MOVE REMNANTS TO C.M. FOR ENERGY CALCULATION (MERGED LATER).
       XDOT(K,ICOMP) = VCM(K)
       XDOT(K,JCOMP) = VCM(K)
    10 CONTINUE
+      CALL UPDATE_ORBIT(ICOMP)
+      CALL UPDATE_ORBIT(JCOMP)
 C
 C          OBTAIN TOTAL KINETIC & POTENTIAL ENERGY (INCLUDING CENTRAL CORES).
       ZKIN = 0.0
@@ -60,14 +62,9 @@ C          INTRODUCE EXPANDING FRAGMENT VELOCITIES WITH RESPECT TO C.M.
 C
 C          SET ORBITAL ELEMENTS OF THE FRAGMENTS.
       RI = DSQRT (X(1,J)**2 + X(2,J)**2 + X(3,J)**2)
-      SUNPL = 1.0 + BODY(J)
-      ENERGY = 0.5D0*(XDOT(1,J)**2 + XDOT(2,J)**2 + XDOT(3,J)**2) -
-     &                                                          SUNPL/RI
-      SEMI = -0.5D0/ENERGY
-      RDOT = X(1,J)*XDOT(1,J) + X(2,J)*XDOT(2,J) + X(3,J)*XDOT(3,J)
-      ECC = DSQRT ((1.0 - RI/SEMI)**2 + RDOT**2/(SEMI*SUNPL))
+      CALL UPDATE_ORBIT(J)
       IF (L.EQ.1) WRITE (6,60)  FACTOR, EGRAV
-      WRITE (6,70)  J,BODY(J)/ZMOON,SEMI,ECC,RI,(X(K,J),K=1,3),
+      WRITE (6,70)  J,BODY(J)/ZMOON,SEMI(J),ECC(J),RI,(X(K,J),K=1,3),
      &                    (XDOT(K,J),K=1,3)
    50 CONTINUE
 C
