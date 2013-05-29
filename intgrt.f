@@ -55,7 +55,7 @@ C          STABILIZE NLIST INTERVAL ON A MEMBERSHIP IN (0.5*N**0.5, N**0.5).
       GO TO 1
 C
     7 IBIN0 = ILIST(I)
-      DT = TIME - T0(I)
+      DT = STEP(I)
       T1PR = T0(I) - T1(I)
       T2PR = T0(I) - T2(I)
       T12PR = T1PR + T2PR
