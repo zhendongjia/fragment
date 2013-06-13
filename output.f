@@ -66,11 +66,11 @@ C          OBTAIN ELAPSED CPU TIME & UPDATE TOTAL SINCE LAST OUTPUT/RESTART.
       CALL CPUTIM(TCOMP)
       CPUTOT = CPUTOT + TCOMP - CPU0
       CPU0 = TCOMP
-      WRITE (6,10)  YEARS,TCOMP,NSTEPN(1),NSTEPN(2),NSTEPN(4),
+      WRITE (6,10)  YEARS,LASTNAME,TCOMP,NSTEPN(1),NSTEPN(2),NSTEPN(4),
      &                                      NSTEPN(9),NSTEPN(10),N,ERROR
-   10 FORMAT (//,'  T =',F9.1,'  CPU =',F7.1,'  # =',I10,'  MOD =',I7,
-     &            '  MERG =',I4,'  FRAG =',I4,'  CRAT =',I4,'  N =',I4,
-     &                                                '  DE/E =',1PE9.1)
+   10 FORMAT (//,'  T =', F9.1, '  NLAST =', I10, '  CPU =', F7.1,
+     &     '  # =', I10, '  MOD =', I7, '  MERG =', I4, '  FRAG =', I4,
+     &     '  CRAT =', I4, '  N =', I4, '  DE/E =', 1PE9.1)
 C
       ZH = 0.0
       ZHM = 0.0
