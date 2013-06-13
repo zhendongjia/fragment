@@ -106,10 +106,11 @@ C
       DUMMY1 = 0.0
       DUMMY2 = 0.0
       WRITE (3,50)  N, YEARS, SCALE, DUMMY1, DUMMY2
-   50 FORMAT(/'N T SCALE DUMMY',I10, 2E10.1,2F8.1)
+   50 FORMAT(/'N T SCALE DUMMY',I10, F15.0, E10.1,2F8.1)
       DO 55  J=1,N
-                WRITE (3,60) BODY(J),(X(K,J),K=1,3),(XDOT(K,J),K=1,3)
-   60 FORMAT(/'M R V',7E10.1)  
+                WRITE (3,60) NAME(J),BODY(J),(X(K,J),K=1,3),
+     &        (XDOT(K,J),K=1,3), SEMI(J), ECC(J)
+   60 FORMAT(/'M R V', I10, 7E10.1, 2F10.3)  
    55 CONTINUE
   160 ISCALE = 1
       IF (KZ(12).EQ.1)  ISCALE = FLOAT (NSTEPN(4) + N)/(0.999*FLOAT(N))

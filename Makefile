@@ -1,4 +1,4 @@
-FFLAGS = -g -fbounds-check -fcheck=all
+FFLAGS = -g
 FC = gfortran
 SOURCE = \
 fragment.f block.f common.f cputim.f event.f fpoly.f fragmt.f histog.f \
