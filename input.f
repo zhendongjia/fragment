@@ -217,22 +217,6 @@ C          SCALING OF INITIAL PARTICLE RADIUS BY INPUT PARAMETER.
           XDOT(1,I) = XDOT(1,I)*(1.0 + 0.01*FLOAT (KZ14))
           XDOT(2,I) = XDOT(2,I)*(1.0 + 0.01*FLOAT (KZ14))
       END IF
-C          CHECK FOR INITIALLY BOUND PAIRS (LAST THREE BODIES ONLY).
-      I1 = I - 3
-      IF (I1.LT.1)  I1 = 1
-      DO 18 J = I1,I
-      IF (J.EQ.I)  GO TO 18
-      RIJ2 = (X(1,I)-X(1,J))**2 + (X(2,I)-X(2,J))**2 +(X(3,I)-X(3,J))**2
-      IF (RIJ2.GT.0.0025)  GO TO 18
-C          QUICK TEST ON SQUARE DISTANCE TO SAVE TIME.
-      A1 = (XDOT(1,I) - XDOT(1,J))**2 + (XDOT(2,I) - XDOT(2,J))**2
-     &                                + (XDOT(3,I) - XDOT(3,J))**2
-      EREL = 0.5D0*A1 - (BODY(I) + BODY(J))/DSQRT (RIJ2)
-      IF (EREL.GT.0.0)  GO TO 18
-      WRITE (6,17)  I,J,RIJ2,EREL
-   17 FORMAT (/,10X,'INITIAL BOUND PAIR REJECTED',2I6,1P2E10.1)
-      GO TO 16
-   18 CONTINUE
 C
 C          SET INITIAL PHASE ANGLE BIN & INCLUDE IT IN THE PERTURBER LIST.
       IBIN = 1 + THETA/ALPHA
