@@ -40,7 +40,7 @@ C
       DO 15 LK = 1,NF2
       K = IF(LK)
 C          SKIP MUTUAL INTERACTION OF ICOMP & JCOMP.
-      IF (J.EQ.K.OR.J + K.LT.2*JCOMP)  GO TO 15
+      IF (J.EQ.K.OR.J + K.EQ.ICOMP+JCOMP)  GO TO 15
       RIJ2 = (X(1,J)-X(1,K))**2 + (X(2,J)-X(2,K))**2 +(X(3,J)-X(3,K))**2
       POTK = POTK + BODY(K)/DSQRT (RIJ2)
    15 CONTINUE
