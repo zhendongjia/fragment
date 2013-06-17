@@ -14,7 +14,7 @@ C          OBTAIN CURRENT COORDINATES AND VELOCITIES TO ORDER F3DOT.
       DT = TIME - T0(I)
       A(1) = 0.05D0*DT
       A(2) = 0.25D0*DT
-      A(3) = (T0(I) - T1(I)) + (T0(I) - T2(I))
+      A(3) = DT01(I) + DT02(I)
       DO 1 K = 1,3
       F2DOTK = D3(K,I)*A(3) + D2(K,I)
       X(K,I) = ((((D3(K,I)*A(1) + ONE12*F2DOTK)*DT + FDOT(K,I))*DT +
@@ -68,7 +68,7 @@ C          OBTAIN ELAPSED CPU TIME & UPDATE TOTAL SINCE LAST OUTPUT/RESTART.
       CPU0 = TCOMP
       WRITE (6,10)  YEARS,LASTNAME,TCOMP,NSTEPN(1),NSTEPN(2),NSTEPN(4),
      &                                      NSTEPN(9),NSTEPN(10),N,ERROR
-   10 FORMAT (//,'  T =', F9.1, '  NLAST =', I10, '  CPU =', F7.1,
+   10 FORMAT (//,'  T =', F15.1, '  NLAST =', I10, '  CPU =', F7.1,
      &     '  # =', I10, '  MOD =', I7, '  MERG =', I4, '  FRAG =', I4,
      &     '  CRAT =', I4, '  N =', I4, '  DE/E =', 1PE9.1)
 C
@@ -109,8 +109,8 @@ C
    50 FORMAT(/'N T SCALE DUMMY',I10, F15.0, E10.1,2F8.1)
       DO 55  J=1,N
                 WRITE (3,60) NAME(J),BODY(J),(X(K,J),K=1,3),
-     &        (XDOT(K,J),K=1,3), SEMI(J), ECC(J)
-   60 FORMAT(/'M R V', I10, 7E10.1, 2F10.3)  
+     &     (XDOT(K,J),K=1,3), SEMI(J), ECC(J), T_TIDAL1(J), T_TIDAL2(J)
+   60 FORMAT(/'M R V', I10, 7E10.1, 2F10.3, 2E10.1)  
    55 CONTINUE
   160 ISCALE = 1
       IF (KZ(12).EQ.1)  ISCALE = FLOAT (NSTEPN(4) + N)/(0.999*FLOAT(N))

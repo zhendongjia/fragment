@@ -15,4 +15,4 @@ print:
 	@cat $(SOURCE) > FRAGMENT.TEXT
 
 clean:
-	rm -f $(OBJECTS) fragment
+	rm -f *.o fragment

@@ -11,7 +11,8 @@ C
      &               D1(3,NMAX),D2(3,NMAX),D3(3,NMAX),STEP(NMAX),
      &               T0(NMAX),DT01(NMAX),DT02(NMAX),DT03(NMAX),
      &               R(NMAX),SPIN(NMAX),A0(NMAX),EMB(3,100,NMAX),
-     &               SEMI(NMAX), ECC(NMAX)
+     &               SEMI(NMAX), ECC(NMAX), 
+     &               T_TIDAL1(NMAX), T_TIDAL2(NMAX)
       COMMON/ORBIT/  H(NMAX),HDOT(NMAX),D1HDOT(NMAX),D2HDOT(NMAX),
      &               D3HDOT(NMAX)
       COMMON/NAMES/  N,NZERO,NBTOT,NBPERT,NBMAX,NRPERT,NRUN,MARS,
@@ -24,4 +25,6 @@ C
      &               ONE3,ONE6,ONE9,ONE12,ALPHA,ALPHA1,DEGREE,TWOPI,
      &               TIME,TNEXT,TLIST,DTLIST,ETOT,BINARY,RIN2,ROUT2,
      &               BSTAR,ZKM,CI,CII,VC,SI,CEJ,ZMOON,EMBRYO,RM,RMAX,
-     &               ROCHE,CPUTOT,CPU0,DUMMY(6)
+     &               ROCHE,CPUTOT,CPU0,DUMMY(6),
+     &               T_DEP, R_EDGE, DENS0
+
