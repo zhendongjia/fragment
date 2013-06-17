@@ -8,8 +8,8 @@ C
      &               LISTE,LISTC,IEMB
       COMMON/NBODY/  BODY(NMAX),X(3,NMAX),X0(3,NMAX),XDOT(3,NMAX),
      &               X0DOT(3,NMAX),F(3,NMAX),FDOT(3,NMAX),FI(3,NMAX),
-     &               D1(3,NMAX),D2(3,NMAX),D3(3,NMAX),
-     &               STEP(NMAX),T0(NMAX),T1(NMAX),T2(NMAX),T3(NMAX),
+     &               D1(3,NMAX),D2(3,NMAX),D3(3,NMAX),STEP(NMAX),
+     &               T0(NMAX),DT01(NMAX),DT02(NMAX),DT03(NMAX),
      &               R(NMAX),SPIN(NMAX),A0(NMAX),EMB(3,100,NMAX),
      &               SEMI(NMAX), ECC(NMAX)
       COMMON/ORBIT/  H(NMAX),HDOT(NMAX),D1HDOT(NMAX),D2HDOT(NMAX),

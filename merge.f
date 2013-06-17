@@ -112,9 +112,9 @@ C
       DO 80 J = JCOMP,N
       J1 = J + 1
       T0(J) = T0(J1)
-      T1(J) = T1(J1)
-      T2(J) = T2(J1)
-      T3(J) = T3(J1)
+      DT01(J) = DT01(J1)
+      DT02(J) = DT02(J1)
+      DT03(J) = DT03(J1)
       BODY(J) = BODY(J1)
       R(J) = R(J1)
       SPIN(J) = SPIN(J1)

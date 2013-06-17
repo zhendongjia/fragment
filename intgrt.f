@@ -56,8 +56,8 @@ C          STABILIZE NLIST INTERVAL ON A MEMBERSHIP IN (0.5*N**0.5, N**0.5).
 C
     7 IBIN0 = ILIST(I)
       DT = STEP(I)
-      T1PR = T0(I) - T1(I)
-      T2PR = T0(I) - T2(I)
+      T1PR = DT01(I)
+      T2PR = DT02(I)
       T12PR = T1PR + T2PR
 C          SET THE COMBINED SUN - PLANET MASS.
       SUNPL = 1.0 + BODY(I)
@@ -178,10 +178,10 @@ C          ADD THE SUN - PLANET FORCE COMPONENT.
       F1(3) = FP(3) + ZI*FS
 C
 C          SET TIME INTERVALS FOR CORRECTOR AND UPDATE THE BACKWARDS TIMES.
-      DT1 = TIME - T1(I)
-      DT2 = TIME - T2(I)
-      DT3 = TIME - T3(I)
-      T3PR = T0(I) - T3(I)
+      DT1 = STEP(I) + DT01(I)
+      DT2 = STEP(I) + DT02(I)
+      DT3 = STEP(I) + DT03(I)
+      T3PR = DT03(I)
       S1 = DT + DT1
       S2 = T1PR*T2PR
       S3 = S2*T3PR
@@ -189,9 +189,9 @@ C          SET TIME INTERVALS FOR CORRECTOR AND UPDATE THE BACKWARDS TIMES.
       S5 = T12PR + T3PR
       S6 = (((0.6666666666667D0*DT + S5)*DT06 + S4)*DT12 + ONE6*S3)*DT
       S7 = ((0.2D0*DT + 0.25D0*S5)*DT + ONE3*S4)*DT + 0.5D0*S3
-      T3(I) = T2(I)
-      T2(I) = T1(I)
-      T1(I) = T0(I)
+      DT03(I) = DT02(I) + STEP(I)
+      DT02(I) = DT01(I) + STEP(I)
+      DT01(I) = STEP(I)
       T0(I) = TIME
       A1 = 1.0/DT
       A2 = 1.0/DT1
