@@ -9,7 +9,7 @@ C
      & 		  AI,NF,IF(NFMAX),ICOMP,JCOMP
       COMMON/COLL/  VR2,VESC,VREB,EGRAV
       REAL*8  RAN2,WK(2) 
-      PARAMETER(LF=6)
+      PARAMETER(LF=3)
       REAL*8  MTOT, BETA, BMAX, BSMAX, VLR(3), A, DELT_V,
      &     MREM, S, V_ESC, PHI, NM(NFMAX), B, XR2,XDR2, ITA, 
      &     MF(LF), VMF(LF), M(LF), BODYI, XDOTI(3), RHO1, M_SUN, RC1, RI
@@ -85,7 +85,7 @@ C          ASSIGN NEW LOCATIONS FOR THE FRAGMENTS AND INCREASE N.
  20   CONTINUE
       WRITE(6,15) NAME(TAR), NAME(ICOMP+JCOMP-TAR), 
      &     IFIRSTFRAG, LASTNAME
- 15   FORMAT("FRAGMT:", I5, I5, " -> ", I5, " ... ", I5)
+ 15   FORMAT(5X,"FRAGMT:", I5, I5, " -> ", I5, " ... ", I5 )
 C
 C          GENERATE  VELOCITIES OF THE LARGEST REMNANT
 C     VCM2 = VCM(1)**2  + VCM(2)**2 + VCM(3)**2
@@ -161,10 +161,11 @@ C
          END IF         
  41   CONTINUE
 C
-        DO 39 L =1, LF
-            WRITE (6, 38) NMF(L), MF(L)/MTOT, VMF(L)
- 38         FORMAT (3X, 'FRAGM. NMV:',I5,F9.4,F9.4)
- 39         CONTINUE
+C        DO 39 L =1, LF
+C            WRITE (6, 38) NMF(L), MF(L)/MTOT, VMF(L)
+C 38         FORMAT (3X, 'FRAGM. NMV:',I5,F9.4,F9.4)
+C 39         CONTINUE
+C
 C          SPECIFY GLOBAL VARIABLES FOR THE FRAGMENTS (NO Z-DISPERSION).
       DO 50 Q = 1,NMF(LF)
       J = IF(Q)
