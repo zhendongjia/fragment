@@ -54,7 +54,8 @@ C     CALCULATE THE IMPACT OF GAS POTENTIAL.
        END IF
 C
 C     CALCULATE THE IMPACT OF GAS DAMPING.
-       IF (KZ(19).GT.0) THEN
+       IF (KZ(19).GT.0.AND.
+     &       SQRT(X(1,I)**2+X(2,I)**2+X(3,I)**2).LE.R_IN) THEN
           CALL GAS_DAMPING(I)
         END IF
 C
