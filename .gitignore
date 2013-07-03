@@ -2,3 +2,5 @@
 !*.f
 !Makefile
 !COMMONP.for
+!runfile/
+!runfile/*.py
