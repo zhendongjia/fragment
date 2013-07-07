@@ -10,7 +10,7 @@ C
       REAL*8  RSMIN2,RSMAX2,R3INV,RSEP2,BODYJ,FRAGM
       COMMON/TABLE/  RSMIN2,RSMAX2,R3INV(0:10000)
       REAL*8  F2DOT(4),WK(10)
-      REAL*8  F1(4),F1DOT(4)
+      REAL*8  F1(4),F1DOT(4),P(3),PDOT(3)
       COMMON/INTGC/ XI, YI, ZI, FRAGM, CHECK, FP(3), JMIN
 C
 C
@@ -81,14 +81,30 @@ C
       DT34 = 0.75D0*DT
       DT32 = 1.5D0*DT
       DT20 = 2.0D0*DT  
+      DO 3 K=1,3
+         P(K) = 0.0
+         PDOT(K) = 0.0
+ 3    CONTINUE
+C     CALCULATE THE IMPACT OF GAS POTENTIAL.
+      IF (KZ(18).GT.0) THEN
+         CALL GAS_POTENTIAL(I, P, PDOT)
+      END IF
+C     
+C     CALCULATE THE IMPACT OF GAS DAMPING.
+      IF (KZ(19).GT.0.AND.
+     &     SQRT(X(1,I)**2+X(2,I)**2+X(3,I)**2).LE.R_IN) THEN
+         CALL GAS_DAMPING(I, P, PDOT)
+      END IF
 C
 C          OBTAIN CURRENT COORDINATES & VELOCITIES FOR BODY I TO THIRD ORDER.
       DO 10 K = 1,3
       F2DOTK = D3(K,I)*T12PR + D2(K,I)
-      X(K,I) = ((((D3(K,I)*DT06 + F2DOTK)*DT12 + FDOT(K,I))*DT + 
-     &                             F(K,I))*DT + X0DOT(K,I))*DT + X0(K,I)
-      X0DOT(K,I) = (((D3(K,I)*DT34 + F2DOTK)*DT19 + FDOT(K,I))*DT32 +
-     &                                         F(K,I))*DT20 + X0DOT(K,I) 
+      X(K,I) = ((((D3(K,I)*DT06 + F2DOTK)*DT12 +
+     &     (FDOT(K,I)+PDOT(K)/6))*DT + 
+     &     (F(K,I)+P(K)/2))*DT + X0DOT(K,I))*DT + X0(K,I)
+      X0DOT(K,I) = (((D3(K,I)*DT34 + F2DOTK)*DT19 +
+     &     (FDOT(K,I)+PDOT(K)/6))*DT32 +
+     &     (F(K,I)+P(K)/2))*DT20 + X0DOT(K,I) 
       FP(K) = 0.0
    10 CONTINUE
       CALL UPDATE_ORBIT(I)
@@ -176,16 +192,6 @@ C          ADD THE SUN - PLANET FORCE COMPONENT.
       F1(1) = FP(1) + XI*FS
       F1(2) = FP(2) + YI*FS
       F1(3) = FP(3) + ZI*FS
-C     CALCULATE THE IMPACT OF GAS POTENTIAL.
-      IF (KZ(18).GT.0) THEN
-         CALL GAS_POTENTIAL(I, F1, F1DOT)
-      END IF
-C     
-C     CALCULATE THE IMPACT OF GAS DAMPING.
-      IF (KZ(19).GT.0.AND.
-     &     SQRT(X(1,I)**2+X(2,I)**2+X(3,I)**2).LE.R_IN) THEN
-         CALL GAS_DAMPING(I, F1, F1DOT)
-      END IF
 C
 C          SET TIME INTERVALS FOR CORRECTOR AND UPDATE THE BACKWARDS TIMES.
       DT1 = STEP(I) + DT01(I)
