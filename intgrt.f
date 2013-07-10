@@ -9,7 +9,7 @@ C
      &		  AI,NF,IF(NFMAX),ICOMP,JCOMP
       REAL*8  BODYJ,FRAGM
       REAL*8  F2DOT(4),WK(10)
-      REAL*8  F1(4),F1DOT(4),P(3),PDOT(3)
+      REAL*8  F1(4),F1DOT(4),PDOT(3)
       COMMON/INTGC/ XI, YI, ZI, FRAGM, CHECK, FP(3), JMIN
 C
 C
@@ -80,30 +80,14 @@ C
       DT34 = 0.75D0*DT
       DT32 = 1.5D0*DT
       DT20 = 2.0D0*DT  
-      DO 3 K=1,3
-         P(K) = 0.0
-         PDOT(K) = 0.0
- 3    CONTINUE
-C     CALCULATE THE IMPACT OF GAS POTENTIAL.
-      IF (KZ(18).GT.0) THEN
-         CALL GAS_POTENTIAL(I, P, PDOT)
-      END IF
-C     
-C     CALCULATE THE IMPACT OF GAS DAMPING.
-      IF (KZ(19).GT.0.AND.
-     &     SQRT(X(1,I)**2+X(2,I)**2+X(3,I)**2).LE.R_IN) THEN
-         CALL GAS_DAMPING(I, P, PDOT)
-      END IF
 C
 C          OBTAIN CURRENT COORDINATES & VELOCITIES FOR BODY I TO THIRD ORDER.
       DO 10 K = 1,3
       F2DOTK = D3(K,I)*T12PR + D2(K,I)
-      X(K,I) = ((((D3(K,I)*DT06 + F2DOTK)*DT12 +
-     &     (FDOT(K,I)+PDOT(K)/6))*DT + 
-     &     (F(K,I)+P(K)/2))*DT + X0DOT(K,I))*DT + X0(K,I)
+      X(K,I) = ((((D3(K,I)*DT06 + F2DOTK)*DT12 + FDOT(K,I))*DT + 
+     &     F(K,I))*DT + X0DOT(K,I))*DT + X0(K,I)
       X0DOT(K,I) = (((D3(K,I)*DT34 + F2DOTK)*DT19 +
-     &     (FDOT(K,I)+PDOT(K)/6))*DT32 +
-     &     (F(K,I)+P(K)/2))*DT20 + X0DOT(K,I) 
+     &     FDOT(K,I))*DT32 + F(K,I))*DT20 + X0DOT(K,I) 
       FP(K) = 0.0
    10 CONTINUE
       CALL UPDATE_ORBIT(I)
@@ -116,33 +100,9 @@ C
       IF (KZ(11).EQ.0.AND.BODY(I).LT.EMBRYO)  GO TO 15
 C
 C          INCLUDE ALL PERTURBATIONS (DIRECT AND INDIRECT TERMS).
-      DO 12 J = 1,N
-      IF (J.EQ.I)  GO TO 12
-      S = TIME - T0(J)
-      XJ = ((FDOT(1,J)*S + F(1,J))*S + X0DOT(1,J))*S + X0(1,J) 
-      YJ = ((FDOT(2,J)*S + F(2,J))*S + X0DOT(2,J))*S + X0(2,J) 
-      ZJ = ((FDOT(3,J)*S + F(3,J))*S + X0DOT(3,J))*S + X0(3,J) 
-C
-      XIJ = XJ - XI
-      YIJ = YJ - YI
-      ZIJ = ZJ - ZI
-      RIJ2 = XIJ**2 + YIJ**2 + ZIJ**2
-      FIJ = BODY(J)/(RIJ2*DSQRT (RIJ2))
-      RJ2 = XJ**2 + YJ**2 + ZJ**2
-      FJ = BODY(J)/(RJ2*DSQRT (RJ2))
-      FP(1) = FP(1) + XIJ*FIJ - XJ*FJ
-      FP(2) = FP(2) + YIJ*FIJ - YJ*FJ
-      FP(3) = FP(3) + ZIJ*FIJ - ZJ*FJ
-C
-C          CHECK APPROACHING FRAGMENT INSIDE 0.1 (KINEMATIC TIME-STEP TEST).
-      IF (RIJ2.GT.0.01.OR.BODY(J).GT.FRAGM)  GO TO 12
-      RDOT = XIJ*(X0DOT(1,J)-X0DOT(1,I)) + YIJ*(X0DOT(2,J)-X0DOT(2,I)) 
-      IF (RDOT.GT.0.0)  GO TO 12
-      DELT = RIJ2/RDOT
-      IF (DELT.LT.CHECK)  GO TO 12
-      CHECK = DELT
-      JMIN = J
-   12 CONTINUE
+      DO J = 1,N
+         IF (J.NE.I) CALL CALC_INTGRT(I,J)
+      END DO
       GO TO 40
 C
 C          OBTAIN THE DOMINANT PLANETARY PERTURBATIONS (DIRECT TERMS ONLY).
@@ -180,9 +140,20 @@ C     CALCULATE THE IMPACT OF THE PERTURBING PLANET.
       IF (KZ(3).GT.0 .AND. KZ(17).GT.0 .AND. I.NE.JUPITER) THEN
          CALL CALC_INTGRT(I, JUPITER)
       END IF
+
+C     CALCULATE THE IMPACT OF GAS POTENTIAL.
+ 40   IF (KZ(18).GT.0) THEN
+         CALL GAS_POTENTIAL(I, FP, PDOT)
+      END IF
+C     
+C     CALCULATE THE IMPACT OF GAS DAMPING.
+      IF (KZ(19).GT.0.AND.
+     &     SQRT(X(1,I)**2+X(2,I)**2+X(3,I)**2).LE.R_IN) THEN
+         CALL GAS_DAMPING(I, FP, PDOT)
+      END IF      
 C
 C          FORM THE PLANETARY PERTURBATIONS.
-   40 PERT2 = FP(1)**2 + FP(2)**2 + FP(3)**2
+      PERT2 = FP(1)**2 + FP(2)**2 + FP(3)**2
       RI2 = XI**2 + YI**2 + ZI**2
       GAMMA2 = PERT2*RI2**2
 C
@@ -191,6 +162,7 @@ C          ADD THE SUN - PLANET FORCE COMPONENT.
       F1(1) = FP(1) + XI*FS
       F1(2) = FP(2) + YI*FS
       F1(3) = FP(3) + ZI*FS
+
 C
 C          SET TIME INTERVALS FOR CORRECTOR AND UPDATE THE BACKWARDS TIMES.
       DT1 = STEP(I) + DT01(I)

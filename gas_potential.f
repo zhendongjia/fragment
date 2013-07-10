@@ -10,7 +10,7 @@ C
       R12_DOT = 0.0
       DO 100 K = 1, 3 
          R12 = R12 + X(K,I)**2
-         R12_DOT = R_DOT12 + X(K,I)*XDOT(K,I)
+         R12_DOT = R12_DOT + X(K,I)*XDOT(K,I)
  100  CONTINUE
       R12 = SQRT(R12)
       R12_DOT = R12_DOT/R12

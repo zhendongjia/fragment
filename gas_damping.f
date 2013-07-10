@@ -14,7 +14,7 @@ C
       V12_DOT = 0.0
       DO 200 K = 1, 3 
          R12 = R12 + X(K,I)**2
-         R12_DOT = R_DOT12 + X(K,I)*XDOT(K,I)
+         R12_DOT = R12_DOT + X(K,I)*XDOT(K,I)
          V12 = V12 + XDOT(K,I)**2
          V12_DOT = V12_DOT + XDOT(K,I)*P(K)
  200  CONTINUE
