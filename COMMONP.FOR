@@ -12,7 +12,7 @@ C
      &               T0(NMAX),DT01(NMAX),DT02(NMAX),DT03(NMAX),
      &               R(NMAX),SPIN(NMAX),A0(NMAX),EMB(3,100,NMAX),
      &               SEMI(NMAX), ECC(NMAX), 
-     &               T_TIDAL1(NMAX), T_TIDAL2(NMAX)
+     &               T_TIDAL1(NMAX), T_TIDAL2(NMAX), W(NMAX)
       COMMON/ORBIT/  H(NMAX),HDOT(NMAX),D1HDOT(NMAX),D2HDOT(NMAX),
      &               D3HDOT(NMAX)
       COMMON/NAMES/  N,NZERO,NBTOT,NBPERT,NBMAX,NRPERT,NRUN,MARS,
