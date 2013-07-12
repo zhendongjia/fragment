@@ -103,78 +103,8 @@ C          INCREASE EMBRYO INDEX UNLESS IDENTIFIED ABOVE (LIMIT IS MBMAX).
           LISTC(KEMB) = 0
       END IF
 C
-C          UPDATE ALL COMMON VARIABLES.
-   70 N = N - 1
-      IF (JUPITER.GT.JCOMP) JUPITER = JUPITER - 1
-      IF (ICOMP.GT.JCOMP) ICOMP = ICOMP - 1
-      IF (JCOMP.GT.N)  GO TO 90
-C
-      DO 80 J = JCOMP,N
-      J1 = J + 1
-      T0(J) = T0(J1)
-      DT01(J) = DT01(J1)
-      DT02(J) = DT02(J1)
-      DT03(J) = DT03(J1)
-      BODY(J) = BODY(J1)
-      R(J) = R(J1)
-      SPIN(J) = SPIN(J1)
-      A0(J) = A0(J1)
-      STEP(J) = STEP(J1)
-      H(J) = H(J1)
-      HDOT(J) = HDOT(J1)
-      D1HDOT(J) = D1HDOT(J1)
-      D2HDOT(J) = D2HDOT(J1)
-      D3HDOT(J) = D3HDOT(J1)
-      ILIST(J) = ILIST(J1)
-      ISTAB(J) = ISTAB(J1)
-      LISTR(J) = LISTR(J1)
-      NAME(J) = NAME(J1)
-      MPERT(J) = MPERT(J1)
-      SEMI(J) = SEMI(J1)
-      ECC(J) = ECC(J1)
-C
-      DO 75 K = 1,3
-      X(K,J) = X(K,J1)
-      X0(K,J) = X0(K,J1)
-      XDOT(K,J) = XDOT(K,J1)
-      X0DOT(K,J) = X0DOT(K,J1)
-      F(K,J) = F(K,J1)
-      FDOT(K,J) = FDOT(K,J1)
-      FI(K,J) = FI(K,J1)
-      D1(K,J) = D1(K,J1)
-      D2(K,J) = D2(K,J1)
-      D3(K,J) = D3(K,J1)
-   75 CONTINUE
-   80 CONTINUE
-C
-C          REDUCE HIGHER LOCATIONS IN THE PERTURBER LIST BY ONE.
-   90 DO 100 J = 1,NBTOT
-      NNB = LIST(1,J) + 1
-      IF (NNB.EQ.1)  GO TO 100
-      DO 95 L = 2,NNB
-      IF (LIST(L,J).GT.JCOMP)  LIST(L,J) = LIST(L,J) - 1
-   95 CONTINUE
-  100 CONTINUE
-C
-C           MODIFY THE TIME-STEP LIST DUE TO REMOVAL OF JCOMP.
-      NNB = NLIST(1)
-      L = 2
-  170 IF (NLIST(L).NE.JCOMP)  GO TO 175
-      IF (L.GT.NNB)  GO TO 173
-C          MOVE UP THE SUBSEQUENT LIST MEMBERS AND REDUCE MEMBERSHIP BY ONE.
-      DO 172 K = L,NNB
-  172 NLIST(K) = NLIST(K+1)
-  173 NLIST(1) = NLIST(1) - 1
-C          REDUCE HIGHER PARTICLE LOCATIONS BY ONE.
-  175 IF (NLIST(L).GT.JCOMP)  NLIST(L) = NLIST(L) - 1
-      L = L + 1
-      IF (L.LE.NLIST(1) + 1)  GO TO 170
-C
-C          SET AN ARBITRARY PARTICLE IN FIRST LOCATION IF NLIST IS EMPTY.
-      IF (NLIST(1).EQ.0)  THEN
-          NLIST(2) = 1
-          NLIST(1) = 1
-      END IF
+ 70   IF (ICOMP.GT.JCOMP) ICOMP = ICOMP - 1
+      CALL REMOVE(JCOMP)
 C
 C          OBTAIN NEW FORCE DIFFERENCES AND TIME-STEP.
       CALL FPOLY(ICOMP)

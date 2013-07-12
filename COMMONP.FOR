@@ -25,6 +25,6 @@ C
      &               ONE3,ONE6,ONE9,ONE12,ALPHA,ALPHA1,DEGREE,TWOPI,
      &               TIME,TNEXT,TLIST,DTLIST,ETOT,BINARY,RIN2,ROUT2,
      &               BSTAR,ZKM,CI,CII,VC,SI,CEJ,ZMOON,EMBRYO,RM,RMAX,
-     &               ROCHE,CPUTOT,CPU0,DUMMY(6),
-     &               T_DEP, R_EDGE, R_IN, DENS0, CRIT_STEP
+     &               ROCHE,CPUTOT,CPU0,DUMMY(6), T_DEP, R_EDGE, R_IN,
+     &               DENS0, CRIT_STEP,CRIT_DISTANCE2
 

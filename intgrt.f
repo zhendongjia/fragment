@@ -52,6 +52,11 @@ C          STABILIZE NLIST INTERVAL ON A MEMBERSHIP IN (0.5*N**0.5, N**0.5).
           DTLIST = 10.0*STEP(1)
       END IF
       GO TO 1
+
+      IF (X(1,I)**2+X(2,I)**2+X(3,I)**2.LT.CRIT_DISTANCE2) THEN
+         CALL REMOVE(I)
+         GO TO 1
+      END IF
 C
     7 IBIN0 = ILIST(I)
       DT = STEP(I)
