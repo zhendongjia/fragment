@@ -48,24 +48,31 @@ C     UPDATE ALL COMMON VARIABLES.
 C     REDUCE HIGHER LOCATIONS IN THE PERTURBER LIST BY ONE.
       DO J = 1,NBTOT
          NNB = LIST(1,J)
+         LOCATION = 0
          DO L = 2,NNB+1
+            IF (LIST(L,J).EQ.ID) LOCATION = L
             IF (LIST(L,J).GT.ID)  LIST(L,J) = LIST(L,J) - 1
          END DO
+         IF (LOCATION.NE.0) THEN
+            DO L = LOCATION, NNB
+               LIST(L,J) = LIST(L+1,J)
+            END DO
+            LIST(1,J) = NNB - 1
+         END IF
       END DO
 
 C     MODIFY THE TIME-STEP LIST DUE TO REMOVAL OF JCOMP.
       NNB = NLIST(1)
       LOCATION  = 0
-      DO L = 2, NNB
-         IF (NLIST(L).EQ.ID) LOCAION = L
+      DO L = 2, NNB+1
+         IF (NLIST(L).EQ.ID) LOCATION = L
          IF (NLIST(L).GT.ID) NLIST(L) = NLIST(L) - 1
       END DO
       IF (LOCATION.NE.0) THEN
-         NNB = NNB - 1
          DO L = LOCATION, NNB
             NLIST(L) = NLIST(L+1)
          END DO
-         NLIST(1) = NNB
+         NLIST(1) = NNB - 1
       END IF
 
 C     SET AN ARBITRARY PARTICLE IN FIRST LOCATION IF NLIST IS EMPTY.

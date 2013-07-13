@@ -53,12 +53,14 @@ C          STABILIZE NLIST INTERVAL ON A MEMBERSHIP IN (0.5*N**0.5, N**0.5).
       END IF
       GO TO 1
 
-      IF (X(1,I)**2+X(2,I)**2+X(3,I)**2.LT.CRIT_DISTANCE2) THEN
+ 7    DISTANCE2 = X(1,I)**2 + X(2,I)**2 + X(3,I)**2
+      IF (DISTANCE2.LT.CRIT_DISTANCE2 .OR. DISTANCE2.GT.ESCAPE_DISTANCE2) THEN
+         CALL WRITE_OBJECT(I, 6, 'ESCAPE :')
          CALL REMOVE(I)
          GO TO 1
       END IF
-C
-    7 IBIN0 = ILIST(I)
+
+      IBIN0 = ILIST(I)
       DT = STEP(I)
       T1PR = DT01(I)
       T2PR = DT02(I)
