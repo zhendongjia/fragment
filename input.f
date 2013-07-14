@@ -164,6 +164,7 @@ C
 C
       DO 3 I = 1, N
          READ (5,*) BODY(I), (X(K,I), K = 1,3), (XDOT(K,I), K = 1, 3)
+         IS_JUPITER(I) = 0
  3    CONTINUE 
 C
       ALPHA = TWOPI/FLOAT (NBTOT)
@@ -237,7 +238,6 @@ C          SET INITIAL PHASE ANGLE BIN & INCLUDE IT IN THE PERTURBER LIST.
    20 CONTINUE
       LASTNAME = N
 C
-      MARS = 0
       IF (KZ(13).EQ.0)  GO TO 28
 C
 C          GENERATE INITIAL MASS FUNCTION N(M) = M**(-3/2) IN ZM2 TO ZM1.
@@ -257,9 +257,10 @@ C          RESCALE TO TOTAL MASS = N*ZMOON AND SET CORRECT SIZE.
       BODY(I) = BODY(I)*FLOAT (N)*ZMOON/ZMASS
       R(I) = R(I)*(BODY(I)/ZMOON)**0.3333
       IF (BODY(I).GT.ZH)  ZH = BODY(I)
-      IF (BODY(I).GT.ZM)  GO TO 24
-      ZM = BODY(I)
-      IM = I
+      IF (BODY(I).LE.ZM) THEN
+         ZM = BODY(I)
+         IM = I
+      END IF
       MPERT(I) = 1 + SQRT (BODY(I)/EMBRYO)*NBPERT
    24 CONTINUE
 C
@@ -269,38 +270,39 @@ C
    25 FORMAT (//,10X,'IMF   MIN =',F7.3,'  MAX =',F7.3,
      &                                          '  DFMAX =',1PE10.1)
 C 
-      JUPITER = 0
-   28 IF (KZ(3).NE.1)  GO TO 30
+ 28   NJUPITER = KZ(3)
 C          INCLUDE ONE INITIAL BODY WITH SPECIFIED MASS & ORBITAL PARAMETERS.
-      N = N + 1
-      LASTNAME = LASTNAME + 1
-      JUPITER = N
-      READ  (5,*)  BODY(N),SEMI(N),ECC(N)
-      WRITE (6,29)  BODY,SEMI(N),ECC(N)
-   29 FORMAT (//,5X,'PERTURBING PLANET AT PERICENTRE',F12.4,2F10.4)
-C
-      R(N) = RM*(BODY(N)/ZMOON)**0.3333
-      X(1,N) = SEMI(N)*(1.0 - ECC(N))
-C          PERTURBING PLANET AT PERICENTRE.
-      X(2,N) = 0.0
-      X(3,N) = 0.0
-      XDOT(1,N) = 0.0
-      SUNPL = 1.0 + BODY(N)
-      XDOT(2,N) = DSQRT (SUNPL*(1.0D0 + ECC(N)) / 
-     &                   (SEMI(N)*(1.0D0 - ECC(N))))
-      XDOT(3,N) = 0.0
-      ISTAB(N) = KZ(1)
-      IBIN = 1
-      ILIST(N) = IBIN
-      NNB = LIST(1,IBIN) + 1
-      LIST(NNB+1,IBIN) = N
-      LIST(1,IBIN) = NNB
-      NAME(N) = LASTNAME
-      MARS = N
-      IBINR = ROUT2/(X(1,N)**2 + X(2,N)**2)
-      LISTR(N) = IBINR
-      SPIN(N) = 0.0
-      MPERT(N) = 1 + SQRT (BODY(N)/EMBRYO)*NBPERT
+      DO K=1,NJUPITER
+         N = N + 1
+         LASTNAME = LASTNAME + 1
+         JUPITER(K) = N
+         IS_JUPITER(N) = 1
+         READ  (5,*)  BODY(N),SEMI(N),ECC(N)
+         WRITE (6,29)  BODY,SEMI(N),ECC(N)
+ 29      FORMAT (//,5X,'PERTURBING PLANET AT PERICENTRE',F12.4,2F10.4)
+C     
+         R(N) = RM*(BODY(N)/ZMOON)**0.3333
+         X(1,N) = SEMI(N)*(1.0 - ECC(N))
+C     PERTURBING PLANET AT PERICENTRE.
+         X(2,N) = 0.0
+         X(3,N) = 0.0
+         XDOT(1,N) = 0.0
+         SUNPL = 1.0 + BODY(N)
+         XDOT(2,N) = DSQRT (SUNPL*(1.0D0 + ECC(N)) / 
+     &        (SEMI(N)*(1.0D0 - ECC(N))))
+         XDOT(3,N) = 0.0
+         ISTAB(N) = KZ(1)
+         IBIN = 1
+         ILIST(N) = IBIN
+         NNB = LIST(1,IBIN) + 1
+         LIST(NNB+1,IBIN) = N
+         LIST(1,IBIN) = NNB
+         NAME(N) = LASTNAME
+         IBINR = ROUT2/(X(1,N)**2 + X(2,N)**2)
+         LISTR(N) = IBINR
+         SPIN(N) = 0.0
+         MPERT(N) = 1 + SQRT (BODY(N)/EMBRYO)*NBPERT
+      END DO
 C
 C     READ GAS DISK PARAMETER
  30   IF (KZ(18).NE.0) THEN

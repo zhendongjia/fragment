@@ -6,8 +6,22 @@
 
 C     UPDATE ALL COMMON VARIABLES.
       N = N - 1
-      IF (JUPITER.EQ.ID) JUPITER = 0
-      IF (JUPITER.GT.ID) JUPITER = JUPITER - 1
+      IF (IS_JUPITER(ID).EQ.1) THEN
+         LOCATION = 0
+         DO K=1,NJUPITER
+            IF (JUPITER(K).EQ.ID) THEN
+               LOCATION = K
+            END IF
+         END DO
+         NJUPITER = NJUPITER - 1
+         DO K = LOCATION, NJUPITER
+            JUPITER(K) = JUPITER(K+1)
+         END DO
+      END IF
+      DO K=1, NJUPITER
+         IF (JUPITER(K).GT.ID) JUPITER(K)=JUPITER(K)-1
+      END DO
+
       DO J = ID,N
          J1 = J + 1
          T0(J) = T0(J1)
@@ -31,6 +45,7 @@ C     UPDATE ALL COMMON VARIABLES.
          MPERT(J) = MPERT(J1)
          SEMI(J) = SEMI(J1)
          ECC(J) = ECC(J1)     
+         IS_JUPITER(J) = IS_JUPITER(J1)
          DO K = 1,3
             X(K,J) = X(K,J1)
             X0(K,J) = X0(K,J1)

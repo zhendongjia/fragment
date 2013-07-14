@@ -71,13 +71,19 @@ C     REDUCE MASS & RADIUS OF BODY #I #J AND UPDATE GRAVITATIONAL ENERGY.
       R(JCOMP) = RI*(BODY(JCOMP)/BODYI)**0.3333
       EGRAV = EGRAV + 0.6*BODY(ICOMP)**2/R(ICOMP) 
      &     + 0.6*BODY(JCOMP)**2/R(JCOMP)
-C
+
 C          ASSIGN NEW LOCATIONS FOR THE FRAGMENTS AND INCREASE N.
-      IF (JUPITER.EQ.ICOMP .OR. JUPITER.EQ.JCOMP) JUPITER = N + 1
       IFIRSTFRAG = LASTNAME + 1
       DO 20 L = 1,NMF(LF)
          NF = NF + 1
          J = N + 1
+         IF (L.EQ.1 .AND. (IS_JUPITER(ICOMP).EQ.1.OR.IS_JUPITER(JCOMP).EQ.1)) THEN
+            IS_JUPITER(J) = 1
+            NJUPITER = NJUPITER + 1
+            JUPITER(NJUPITER) = J
+         ELSE
+            IS_JUPITER(J) = 0
+         END IF
          IF(NF) = J			
          N = N + 1
          LASTNAME = LASTNAME + 1
