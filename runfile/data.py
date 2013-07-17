@@ -6,8 +6,8 @@ import math
 import os
 import resource
 
-begin = 1
-end = 2
+begin = 10
+end = 10
 runfile_location=os.getenv('HOME')+'/fragment/runfile'
 
 class Orbit:
@@ -16,12 +16,12 @@ class Orbit:
         start = seg.index(':') + 1
         self.name = int(seg[start])
         (self.m, self.semi, self.ecc, self.x, self.y, self.z, 
-         self.vx, self.vy, self.vz) = [
-            float(seg[start+i+1]) for i in range(9)]
+         self.vx, self.vy, self.vz, self.t1, self.t2, self.w) = [
+            float(seg[start+i+1]) for i in range(12)]
 
     def __str__(self):
-        return 'name=%d, m=%f, semi=%f, ecc=%f' % (
-            self.name, self.m, self.semi, self.ecc) 
+        return 'name=%d, m=%f, semi=%f, ecc=%f, w=%f' % (
+            self.name, self.m, self.semi, self.ecc, self.w) 
 
 
 def getstyle(name):
@@ -35,14 +35,17 @@ class PlotUtil:
         self.g = Gnuplot.Gnuplot()
         self.g('set term post enh color eps')
         self.g('set output "%s.eps"' % name)
-        self.g.set_range('xrange', (0, xmax))
-        self.g.set_range('yrange', (0, ymax))
+        self.g('unset key')
+        self.g('set log')
+        self.g.set_range('xrange', (100, xmax))
+        self.g.set_range('yrange', (0.9, ymax))
 
 
 
     def finish(self):
         for name, values in self.prev.items():
-            p = Gnuplot.PlotItems.Data(values, with_=getstyle(name))
+            p = Gnuplot.PlotItems.Data(values, with_=getstyle(name),
+                                       title=str(name))
             self.g._add_to_queue([p])
         self.g.refresh()
         self.g.close()
@@ -66,14 +69,16 @@ class Collision:
         i = i + 3
         while output[i].startswith('   DIAG'): i=i+1
         if output[i].startswith('     MERGE:'):
-            self.dst = [Orbit(output[i+1])]
+            while not output[i].startswith('     MERGER :'): i+=1
+            self.dst = [Orbit(output[i])]
         elif output[i].startswith('     FRAGMT:'):
             self.dst = [ ]
             while not output[i].startswith('     FRAGM. :'): i+=1
             while output[i].startswith('     FRAGM. :'):
                 self.dst.append(Orbit(output[i]))
                 i += 1
-            self.dst.append(Orbit(output[i+1]))
+            while not output[i].startswith('     MERGER :'): i+=1
+            self.dst.append(Orbit(output[i]))
         else: raise(InputError, output[i], 'Invalid line %d' % i)
 
 

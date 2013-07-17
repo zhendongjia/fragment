@@ -1,4 +1,4 @@
-FFLAGS = -g -ffixed-line-length-none -O3 -march=native
+FFLAGS = -g -ffixed-line-length-none
 FC = gfortran
 SOURCE = \
 fragment.f block.f common.f cputim.f event.f fpoly.f fragmt.f histog.f \
