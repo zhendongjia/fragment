@@ -6,7 +6,7 @@ C          ------------------
 C
       INCLUDE 'COMMONP.FOR'
       COMMON/CM/  XCM(3),VCM(3),BCM,BMAX,XF(NFMAX),VF(NFMAX),BF(NFMAX),
-     &		  AI,NF,IF(NFMAX),ICOMP,JCOMP
+     &		  AI,NF,NC,IF(NFMAX),ICOMP,JCOMP
       REAL*8  BODYJ,FRAGM
       REAL*8  F2DOT(4),WK(10)
       REAL*8  F1(4),F1DOT(4),PDOT(3)

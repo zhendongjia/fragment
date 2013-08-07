@@ -5,7 +5,7 @@ C
       IMPLICIT REAL*8  (A-H,O-Z)
       REAL*8         R,SPIN,A0,EMB, M_EARTH
       INTEGER*2      ISTAB,NLIST,ILIST,LISTR,NAME,MPERT,LIST,
-     &               LISTE,LISTC,IEMB
+     &               LISTE,LISTC,IEMB, COUNT_C
       COMMON/NBODY/  BODY(NMAX),X(3,NMAX),X0(3,NMAX),XDOT(3,NMAX),
      &               X0DOT(3,NMAX),F(3,NMAX),FDOT(3,NMAX),FI(3,NMAX),
      &               D1(3,NMAX),D2(3,NMAX),D3(3,NMAX),STEP(NMAX),
