@@ -32,9 +32,9 @@ C
       VCI(2) = R12**(-0.5)*THE(1)
       VCI(3) = R12**(-0.5)*THE(3)
 C     
-      VCI_DOT(1) = 0.5*R12**(-1.5)*THE(2) - R12**(-0.5)*THE_DOT(2)
-      VCI_DOT(2) = (-0.5)*R12**(-1.5)*THE(1) + R12**(-0.5)*THE_DOT(1)
-      VCI_DOT(3) = (-0.5)*R12**(-1.5)*THE(3) + R12**(-0.5)*THE_DOT(3)
+      VCI_DOT(1) = 0.5*R12**(-1.5)*R12_DOT*THE(2) - R12**(-0.5)*THE_DOT(2)
+      VCI_DOT(2) = (-0.5)*R12**(-1.5)*R12_DOT*THE(1) + R12**(-0.5)*THE_DOT(1)
+      VCI_DOT(3) = (-0.5)*R12**(-1.5)*R12_DOT*THE(3) + R12**(-0.5)*THE_DOT(3)
 C     
       DO 202 K = 1, 3
          DELT_V(K) = XDOT(K,I) - VCI(K)
@@ -55,8 +55,8 @@ C
       HI_DOT = HI*1.25*R12_DOT/R12
 C     
       YEAR = TIME/TWOPI
-      DENS_S = DENS0*EXP(-YEAR/T_DEP)
-      DENS_S_DOT = DENS_S*(-1/T_DEP)
+      DENS_S = DENS0*EXP(-YEAR/T_DEP)*R12**(-1.5)
+      DENS_S_DOT = DENS_S*(-1/T_DEP)/TWOPI + DENS_S*(-1.5)*R12_DOT/R12
       DENS_G = DENS_S/HI
       DENS_G_DOT = DENS_G*DENS_S_DOT/DENS_S - DENS_G*HI_DOT/HI 
 C     
